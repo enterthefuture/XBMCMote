@@ -22,7 +22,7 @@ public class XBMCmote {
     
     public static void main(String[] args) {
         try {
-            ShellFactory.createConsoleShell("xbmc", "XBMC Control Shell v0.01.", new XBMCmote()) 
+            ShellFactory.createConsoleShell("xbmc", "XBMC Control Shell v0.1.", new XBMCmote()) 
                     .commandLoop();
         } catch (IOException ex) {
             System.err.println(ex);
@@ -70,10 +70,36 @@ public class XBMCmote {
         return request.toString();
     }
     
-    
     @Command
     public String back() {
         JSONObject request = XBMC.inputBack;
+        
+        XBMC.sendCommand(request);
+        
+        return request.toString();
+    }
+    
+    @Command
+    public String home() {
+        JSONObject request = XBMC.inputHome;
+        
+        XBMC.sendCommand(request);
+        
+        return request.toString();
+    }
+    
+    @Command
+    public String info() {
+        JSONObject request = XBMC.inputInfo;
+        
+        XBMC.sendCommand(request);
+        
+        return request.toString();
+    }
+    
+    @Command
+    public String menu() {
+        JSONObject request = XBMC.inputContextMenu;
         
         XBMC.sendCommand(request);
         
