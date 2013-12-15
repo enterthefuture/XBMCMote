@@ -3,92 +3,89 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.json.simple.JSONObject;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-
+import asg.cliche.Command;
+import asg.cliche.ShellFactory;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
          
 /**
  *
  * @author William
  */
 public class XBMCmote {
-    
-    static JSONObject inputUp = new JSONObject();
-    static JSONObject inputDown = new JSONObject();
-    static JSONObject inputLeft = new JSONObject();
-    static JSONObject inputRight = new JSONObject();
-    
-    static JSONObject inputHome = new JSONObject();
-    static JSONObject inputBack = new JSONObject();
-    
     /**
      * @param args the command line arguments
      */	
+    Remote XBMC = new Remote( "192.168.1.105", 8081 );
+    
     public static void main(String[] args) {
+        try {
+            ShellFactory.createConsoleShell("xbmc", "XBMC Control Shell v0.01.", new XBMCmote()) 
+                    .commandLoop();
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
+    }
+ 
+    
+    
+    @Command
+    public String up() {
+        JSONObject request = XBMC.inputUp;
         
-        buildCommands();
-
-        JSONObject request = inputHome;
+        XBMC.sendCommand(request);
         
-        System.out.println(request.toString());
-        
-        String address = "http://192.168.1.105:8081/jsonrpc";
-        if (args.length != 0) address = args[1];
-        
-        sendCommand(address, request);
+        return request.toString();
     }
     
-    private static void buildCommands() {
+    
+    @Command
+    public String down() {
+        JSONObject request = XBMC.inputDown;
         
-        LinkedHashMap jsonHeaders = new LinkedHashMap();
+        XBMC.sendCommand(request);
         
-        jsonHeaders.put("id", 0);
-        jsonHeaders.put("jsonrpc", "2.0");
-        
-        inputUp.putAll(jsonHeaders);
-        inputUp.put("method", "Input.Up");
-
-        inputDown.putAll(jsonHeaders);
-        inputDown.put("method", "Input.Down");
-        
-        inputLeft.putAll(jsonHeaders);
-        inputLeft.put("method", "Input.Left");
-        
-        inputRight.putAll(jsonHeaders);
-        inputRight.put("method", "Input.Right");
-        
-        inputHome.putAll(jsonHeaders);
-        inputHome.put("method", "Input.Home");
-        
-        inputBack.putAll(jsonHeaders);
-        inputBack.put("method", "Input.Back");
-        
+        return request.toString();
     }
     
-    private static void sendCommand(String xbmcAddress, JSONObject jsonBody) {
-         		
-                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-		try {
-			HttpPost httpRequest = new HttpPost(xbmcAddress);
-			StringEntity httpParams = new StringEntity(jsonBody.toString());
-			httpParams.setContentType("application/json");
-                        httpRequest.setEntity(httpParams);
-			httpClient.execute(httpRequest);
-		// handle response here...
-		} catch (Exception ex) {
-			System.out.println(ex);
-		} finally {
-                    try {
-                        httpClient.close();
-                    } catch (IOException ex) {
-                        System.out.println(ex);
-                    }
-		}
+    
+    @Command
+    public String left() {
+        JSONObject request = XBMC.inputLeft;
+        
+        XBMC.sendCommand(request);
+        
+        return request.toString();
     }
     
+    
+    @Command
+    public String right() {
+        JSONObject request = XBMC.inputRight;
+        
+        XBMC.sendCommand(request);
+        
+        return request.toString();
+    }
+    
+    
+    @Command
+    public String back() {
+        JSONObject request = XBMC.inputBack;
+        
+        XBMC.sendCommand(request);
+        
+        return request.toString();
+    }
+    
+    @Command
+    public String select() {
+        JSONObject request = XBMC.inputSelect;
+        
+        XBMC.sendCommand(request);
+        
+        return request.toString();
+    }
 }
