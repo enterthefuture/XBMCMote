@@ -4,7 +4,12 @@
  * and open the template in the editor.
  */
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.json.simple.JSONObject;
@@ -30,6 +35,7 @@ public class Remote {
     
     JSONObject inputSelect = new JSONObject();
     
+    JSONObject guiNotify = new JSONObject();
 
     String path = "http://192.168.1.105:8081/jsonrpc";
 
@@ -101,27 +107,32 @@ public class Remote {
         
         inputSelect.putAll(jsonHeaders);
         inputSelect.put("method", "Input.Select");
+
+        guiNotify.putAll(jsonHeaders);
+        guiNotify.put("method", "GUI.ShowNotification");
     }
     
-    public void sendCommand(JSONObject jsonBody) {
-         	
-                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-		try {
-			HttpPost httpRequest = new HttpPost(path);
-			StringEntity httpParams = new StringEntity(jsonBody.toString());
-			httpParams.setContentType("application/json");
-                        httpRequest.setEntity(httpParams);
-			httpClient.execute(httpRequest);
-		// handle response here...
-		} catch (Exception ex) {
-			System.out.println(ex);
-		} finally {
-                    try {
-                        httpClient.close();
-                    } catch (IOException ex) {
-                        System.out.println(ex);
-                    }
-		}
+    public String sendCommand(JSONObject jsonBody){
+        InputStream response = null;
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        String data = "ERROR";
+
+        try {
+            try {
+                HttpPost httpRequest = new HttpPost(path);
+                StringEntity httpParams = new StringEntity(jsonBody.toString());
+                httpParams.setContentType("application/json");
+                httpRequest.setEntity(httpParams);
+                response = httpClient.execute(httpRequest).getEntity().getContent();
+                data = IOUtils.toString(response);
+            } catch (Exception ex) {
+                System.out.println(ex);
+            } finally {
+                httpClient.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Remote.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return data;
     }
-    
 }

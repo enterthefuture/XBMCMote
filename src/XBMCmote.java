@@ -7,8 +7,7 @@ import org.json.simple.JSONObject;
 import asg.cliche.Command;
 import asg.cliche.ShellFactory;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.LinkedHashMap;
          
 /**
  *
@@ -35,9 +34,9 @@ public class XBMCmote {
     public String up() {
         JSONObject request = XBMC.inputUp;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     
@@ -45,9 +44,9 @@ public class XBMCmote {
     public String down() {
         JSONObject request = XBMC.inputDown;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     
@@ -55,9 +54,9 @@ public class XBMCmote {
     public String left() {
         JSONObject request = XBMC.inputLeft;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     
@@ -65,53 +64,126 @@ public class XBMCmote {
     public String right() {
         JSONObject request = XBMC.inputRight;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     @Command
     public String back() {
         JSONObject request = XBMC.inputBack;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     @Command
     public String home() {
         JSONObject request = XBMC.inputHome;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     @Command
     public String info() {
         JSONObject request = XBMC.inputInfo;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     @Command
     public String menu() {
         JSONObject request = XBMC.inputContextMenu;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
     }
     
     @Command
     public String select() {
         JSONObject request = XBMC.inputSelect;
         
-        XBMC.sendCommand(request);
+        String response = XBMC.sendCommand(request);
         
-        return request.toString();
+        return String.format("%s\n%s", request.toString(), response);
+    }
+
+    /**
+     *
+     * @param title title of notification
+     * @param message body of notification
+     * @param image icon to be displayed with notification
+     * @param timeout time to display notification
+     * @return command sent
+     */
+    @Command
+    public String notify(String title, String message, String image, int timeout) {
+        JSONObject request = XBMC.guiNotify;
+        
+        LinkedHashMap params = new LinkedHashMap();
+        
+        params.put("title", title);
+        params.put("message", message);
+        params.put("image", image);
+        params.put("timeout", timeout);
+        
+        request.put("params", params);
+        
+        String response = XBMC.sendCommand(request);
+        
+        return String.format("%s\n%s", request.toString(), response);
+    }    
+    
+    /**
+     *
+     * @param title title of notification
+     * @param message body of notification
+     * @param image icon to be displayed with notification
+     * @return command sent
+     */
+    @Command
+    public String notify(String title, String message, String image) {
+        JSONObject request = XBMC.guiNotify;
+        
+        LinkedHashMap params = new LinkedHashMap();
+        
+        params.put("title", title);
+        params.put("message", message);
+        params.put("image", image);
+        
+        request.put("params", params);
+        
+        String response = XBMC.sendCommand(request);
+        
+        return String.format("%s\n%s", request.toString(), response);
+    }
+
+    /**
+     *
+     * @param title title of notification
+     * @param message body of notification
+     * @return command sent
+     */
+    @Command
+    public String notify(String title, String message) {
+        JSONObject request = XBMC.guiNotify;
+        
+        LinkedHashMap params = new LinkedHashMap();
+        
+        params.put("title", title);
+        params.put("message", message);
+        params.put("image", "info");
+        
+        request.put("params", params);
+        
+        String response = XBMC.sendCommand(request);
+        
+        return String.format("%s\n%s", request.toString(), response);
     }
 }
