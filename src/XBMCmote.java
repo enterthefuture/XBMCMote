@@ -8,6 +8,7 @@ import asg.cliche.Command;
 import asg.cliche.ShellFactory;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import org.json.simple.parser.ParseException;
          
 /**
  *
@@ -17,7 +18,7 @@ public class XBMCmote {
     /**
      * @param args the command line arguments
      */	
-    Remote XBMC = new Remote( "192.168.1.105", 8081 );
+    Remote XBMC = new Remote( "192.168.1.105", 8080 );
     
     public static void main(String[] args) {
         try {
@@ -114,6 +115,20 @@ public class XBMCmote {
         return String.format("%s\n%s", request.toString(), response);
     }
 
+    @Command
+    public String playPause() {
+        JSONObject request = XBMC.playPause;
+        
+        String response = XBMC.sendCommand(request);
+        
+        return String.format("%s\n%s", request.toString(), response);
+    }
+    
+    @Command
+    public String raw(String request) {
+        String response = XBMC.sendCommandRaw(request);     
+        return String.format("%s\n%s", request.toString(), response.toString());
+    }
     /**
      *
      * @param title title of notification

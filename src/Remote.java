@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.json.simple.JSONObject;
@@ -36,6 +35,8 @@ public class Remote {
     JSONObject inputSelect = new JSONObject();
     
     JSONObject guiNotify = new JSONObject();
+    
+    JSONObject playPause = new JSONObject();
 
     String path = "http://192.168.1.105:8081/jsonrpc";
 
@@ -110,6 +111,14 @@ public class Remote {
 
         guiNotify.putAll(jsonHeaders);
         guiNotify.put("method", "GUI.ShowNotification");
+        
+        playPause.putAll(jsonHeaders);
+        playPause.put("method", "Player.PlayPause");
+        {
+            LinkedHashMap params = new LinkedHashMap();
+            params.put("playerid", 1);
+            playPause.put("params", params);   
+        }
     }
     
     public String sendCommand(JSONObject jsonBody){
@@ -121,6 +130,30 @@ public class Remote {
             try {
                 HttpPost httpRequest = new HttpPost(path);
                 StringEntity httpParams = new StringEntity(jsonBody.toString());
+                httpParams.setContentType("application/json");
+                httpRequest.setEntity(httpParams);
+                response = httpClient.execute(httpRequest).getEntity().getContent();
+                data = IOUtils.toString(response);
+            } catch (Exception ex) {
+                System.out.println(ex);
+            } finally {
+                httpClient.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Remote.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return data;
+    }
+    
+    public String sendCommandRaw(String request){
+        InputStream response = null;
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        String data = "ERROR";
+
+        try {
+            try {
+                HttpPost httpRequest = new HttpPost(path);
+                StringEntity httpParams = new StringEntity(request);
                 httpParams.setContentType("application/json");
                 httpRequest.setEntity(httpParams);
                 response = httpClient.execute(httpRequest).getEntity().getContent();
